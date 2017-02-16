@@ -203,7 +203,8 @@ void makeTree(Input* inputs, vector<char>& connectors,
     // if there is only one command with no connectors, just return that 
     // command
     if (commands.size() == 1) {
-        inputs = new Command(commands.at(0));
+        Input* in = new Command(commands.at(0));
+        inputs = in;
         return;
     }
     
