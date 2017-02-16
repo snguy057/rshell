@@ -5,6 +5,10 @@
 #include <cstdlib>
 
 #include "Input.h"
+#include "Command.h"
+#include "AND.h"
+#include "OR.h"
+#include "SemiColon.h"
 
 using namespace std;
 
@@ -66,7 +70,7 @@ int main () {
 
 // checks for only spaces or if comments
 bool onlySpace(const string& userInput) {
-    for (int it = 0; it < userInput.size(); it++) {
+    for (unsigned it = 0; it < userInput.size(); it++) {
         if (userInput.at(it) != ' ' && userInput.at(it) != '#') {
             return false;
         }
@@ -82,26 +86,26 @@ void parse(string& userInput, vector<Input*>& inputs) {
     bool commentFound = 0;
     bool openingQuote = 0;
     bool closingQuote = 0;
-    bool semicolon = 0;
-    bool AND = 0;
-    bool OR = 0;
+    // bool semicolon = 0;
+    // bool AND = 0;
+    // bool OR = 0;
 
     vector<char> connectors;
     vector<string> commands;
 
     // index on string we are beginning at
-    int begin = 0;
+    unsigned begin = 0;
 
     // seraches for comments and resizes the string to all 
     // whitespace and comments
-    for (int i = 0; i < userInput.size() && !commentFound; i++) {
+    for (unsigned i = 0; i < userInput.size() && !commentFound; i++) {
         if (userInput.at(i) == '#') {
             userInput = userInput.substr(begin, i - begin);
             commentFound = 1;
         }
     }
 
-    for (int it = 0; it < userInput.size(); it++) {
+    for (unsigned it = 0; it < userInput.size(); it++) {
         // ignore any leading whitespace
         while (userInput.at(it) == ' ' && it < userInput.size()) {
             it++;
@@ -178,7 +182,7 @@ void parse(string& userInput, vector<Input*>& inputs) {
 void makeTree(vector<Input*>& inputs, vector<char>& connectors, 
                 vector<string>& commands) {
     // checks to see if there are any empty commands
-    for(int i = 0; i < commands.size(); i++) {
+    for(unsigned i = 0; i < commands.size(); i++) {
         if (commands.at(i) == "") {
             string s = "Error empty arguement(s) passed into a connector";
             throw s;
@@ -217,27 +221,33 @@ Input* makeTree_(vector<char>& connectors,
     if (connectors.back() == ';') {
         connectors.pop_back();
         Input* con = new SemiColon();
-        con->right = new Command(commands.back())
+        // con->right = new Command(commands.back());
+        con->setRight(new Command(commands.back()));
         commands.pop_back();
-        con->left = makeTree_(connectors, commands)
+        // con->left = makeTree_(connectors, commands);
+        con->setLeft(makeTree_(connectors, commands));
         return con;
     }
 
     if (connectors.back() == '&') {
         connectors.pop_back();
         Input* con = new AND();
-        con->right = new Command(commands.back())
+        // con->right = new Command(commands.back())
+        con->setRight(new Command(commands.back()));
         commands.pop_back();
-        con->left = makeTree_(connectors, commands)
+        // con->left = makeTree_(connectors, commands)
+        con->setLeft(makeTree_(connectors, commands));
         return con;
     }
 
     if (connectors.back() == '|') {
         connectors.pop_back();
         Input* con = new OR();
-        con->right = new Command(commands.back())
+        // con->right = new Command(commands.back());
+        con->setRight(new Command(commands.back()));
         commands.pop_back();
-        con->left = makeTree_(connectors, commands)
+        // con->left = makeTree_(connectors, commands);
+        con->setLeft(makeTree_(connectors, commands));
         return con;
     }
 

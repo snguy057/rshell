@@ -41,8 +41,7 @@ bool Command::evaluate() {
         
         tmp_cstr = strtok(NULL, " ");
     }
-
-    char* args[arguments.size() + 1];   // Char* array to be passed to execvp()
+    char** args = new char*[arguments.size()+1];   // Char* array to be passed to execvp()
 
     for (unsigned i = 0; i < arguments.size(); i++) {
         args[i] = arguments.at(i);
@@ -73,6 +72,8 @@ bool Command::evaluate() {
         }
         
     }
+
+    delete[] args;
 
     return true;
 }
