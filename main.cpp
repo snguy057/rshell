@@ -14,9 +14,9 @@ using namespace std;
 
 bool onlySpace(const string& userInput);
 
-void parse(string& userInput, vector<Input*>& inputs);
+void parse(string& userInput, Input* inputs);
 
-void makeTree(vector<Input*>& inputs, vector<char>& connectors, 
+void makeTree(Input* inputs, vector<char>& connectors, 
                 vector<string>& commands);
 
 Input* makeTree_(vector<char>& connectors, vector<string>& commands);
@@ -40,30 +40,34 @@ Input* makeTree_(vector<char>& connectors, vector<string>& commands);
 int main () {
     // Display command line and read input
     string userInput = "";
-    vector<Input*> inputs; 
+    Input* inputs = 0;
 
-    cout << "$ ";
-    getline(cin, userInput);
-
-    // checks if there is no input, only spaces, or comments
-    while (userInput == "" || onlySpace(userInput)) {
+    while(1) {
         cout << "$ ";
         getline(cin, userInput);
-    }
 
-    if (userInput == "exit") {
-        exit(0);
-    }
-    // Converts input from string to cstring
-    // char userCstr[userInput.size() + 1];
-    // strcpy(userCstr, userInput.c_str());
+        // checks if there is no input, only spaces, or comments
+        while (userInput == "" || onlySpace(userInput)) {
+            cout << "$ ";
+            getline(cin, userInput);
+        }
 
-    // Calls parse on user's input
-    try {
-        parse(userInput, inputs);
-    }
-    catch(string s) {
-        cout << s << endl;
+        if (userInput == "exit") {
+            exit(0);
+        }
+        // Converts input from string to cstring
+        // char userCstr[userInput.size() + 1];
+        // strcpy(userCstr, userInput.c_str());
+
+        // Calls parse on user's input
+        try {
+            parse(userInput, inputs);
+        }
+        catch(string s) {
+            cout << s << endl;
+        }
+
+        inputs->evaluate();
     }
     return 0;
 }
@@ -82,9 +86,9 @@ bool onlySpace(const string& userInput) {
     return true;
 } 
 
-void parse(string& userInput, vector<Input*>& inputs) {
+void parse(string& userInput, Input* inputs) {
     bool commentFound = 0;
-    bool openingQuote = 0;
+    // bool openingQuote = 0;
     bool closingQuote = 0;
     // bool semicolon = 0;
     // bool AND = 0;
@@ -114,7 +118,7 @@ void parse(string& userInput, vector<Input*>& inputs) {
 
         // checks for opening and closing quotes
         if (userInput.at(it) == '\"') {
-            openingQuote = 1;
+            // openingQuote = 1;
             it++;
             while (closingQuote == 0 && it < userInput.size()) {
                 if (userInput.at(it) == '\"') {
@@ -131,7 +135,7 @@ void parse(string& userInput, vector<Input*>& inputs) {
         }
 
         else if (userInput.at(it) == '\'') {
-            openingQuote = 1;
+            // openingQuote = 1;
             it++;
             while (closingQuote == 0 && it < userInput.size()) {
                 if (userInput.at(it) == '\'') {
@@ -179,7 +183,7 @@ void parse(string& userInput, vector<Input*>& inputs) {
     makeTree(inputs, connectors, commands);
 }
 
-void makeTree(vector<Input*>& inputs, vector<char>& connectors, 
+void makeTree(Input* inputs, vector<char>& connectors, 
                 vector<string>& commands) {
     // checks to see if there are any empty commands
     for(unsigned i = 0; i < commands.size(); i++) {
@@ -199,13 +203,12 @@ void makeTree(vector<Input*>& inputs, vector<char>& connectors,
     // if there is only one command with no connectors, just return that 
     // command
     if (commands.size() == 1) {
-        Input* in = new Command(commands.at(0));
-        inputs.push_back(in);
+        inputs = new Command(commands.at(0));
         return;
     }
     
     // start of recursive calls
-    inputs.push_back(makeTree_(connectors, commands));
+    inputs = makeTree_(connectors, commands);
 }
 
 // a helper function for the recusion
@@ -220,7 +223,7 @@ Input* makeTree_(vector<char>& connectors,
     // top node
     if (connectors.back() == ';') {
         connectors.pop_back();
-        Input* con = new SemiColon();
+        SemiColon* con = new SemiColon();
         // con->right = new Command(commands.back());
         con->setRight(new Command(commands.back()));
         commands.pop_back();
@@ -231,7 +234,7 @@ Input* makeTree_(vector<char>& connectors,
 
     if (connectors.back() == '&') {
         connectors.pop_back();
-        Input* con = new AND();
+        AND* con = new AND();
         // con->right = new Command(commands.back())
         con->setRight(new Command(commands.back()));
         commands.pop_back();
@@ -242,7 +245,7 @@ Input* makeTree_(vector<char>& connectors,
 
     if (connectors.back() == '|') {
         connectors.pop_back();
-        Input* con = new OR();
+        OR* con = new OR();
         // con->right = new Command(commands.back());
         con->setRight(new Command(commands.back()));
         commands.pop_back();
