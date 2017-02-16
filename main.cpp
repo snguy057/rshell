@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdio>
 #include <cstdlib>
+#include <limits>
 
 #include "Input.h"
 #include "Command.h"
@@ -14,9 +15,9 @@ using namespace std;
 
 bool onlySpace(const string& userInput);
 
-void parse(string& userInput, Input* inputs);
+void parse(string& userInput, Input*& inputs);
 
-void makeTree(Input* inputs, vector<char>& connectors, 
+void makeTree(Input*& inputs, vector<char>& connectors, 
                 vector<string>& commands);
 
 Input* makeTree_(vector<char>& connectors, vector<string>& commands);
@@ -45,7 +46,7 @@ int main () {
     while(1) {
         cout << "$ ";
         getline(cin, userInput);
-
+        // cout << userInput << endl;
         // checks if there is no input, only spaces, or comments
         while (userInput == "" || onlySpace(userInput)) {
             cout << "$ ";
@@ -65,6 +66,7 @@ int main () {
         }
         catch(string s) {
             cout << s << endl;
+            continue;
         }
 
         inputs->evaluate();
@@ -86,13 +88,15 @@ bool onlySpace(const string& userInput) {
     return true;
 } 
 
-void parse(string& userInput, Input* inputs) {
+void parse(string& userInput, Input*& inputs) {
     bool commentFound = 0;
     // bool openingQuote = 0;
     bool closingQuote = 0;
     // bool semicolon = 0;
     // bool AND = 0;
     // bool OR = 0;
+
+    bool commandPushed = 0;
 
     vector<char> connectors;
     vector<string> commands;
@@ -108,12 +112,15 @@ void parse(string& userInput, Input* inputs) {
             commentFound = 1;
         }
     }
-
+        
     for (unsigned it = 0; it < userInput.size(); it++) {
         // ignore any leading whitespace
-        while (userInput.at(it) == ' ' && it < userInput.size()) {
-            it++;
-            begin++;
+        if (commandPushed == 1) {
+            while (userInput.at(it) == ' ' && it < userInput.size()) {
+                it++;
+                begin++;
+            }
+            commandPushed = 0;
         }
 
         // checks for opening and closing quotes
@@ -156,6 +163,7 @@ void parse(string& userInput, Input* inputs) {
             connectors.push_back(';');
             commands.push_back(userInput.substr(begin, it - begin));
             begin = it + 1;
+            commandPushed = 1;
         }
 
         // checks for AND connector
@@ -165,6 +173,7 @@ void parse(string& userInput, Input* inputs) {
             connectors.push_back('&');
             commands.push_back(userInput.substr(begin, it - begin));
             begin = it + 2;
+            commandPushed = 1;
         }
 
         // checks for OR connector
@@ -174,6 +183,7 @@ void parse(string& userInput, Input* inputs) {
             connectors.push_back('|');
             commands.push_back(userInput.substr(begin, it - begin));
             begin = it + 2;
+            commandPushed = 1;
         }
     }
     // if there are no connectors, then push the command to commands
@@ -183,7 +193,7 @@ void parse(string& userInput, Input* inputs) {
     makeTree(inputs, connectors, commands);
 }
 
-void makeTree(Input* inputs, vector<char>& connectors, 
+void makeTree(Input*& inputs, vector<char>& connectors, 
                 vector<string>& commands) {
     // checks to see if there are any empty commands
     for(unsigned i = 0; i < commands.size(); i++) {
@@ -205,6 +215,7 @@ void makeTree(Input* inputs, vector<char>& connectors,
     if (commands.size() == 1) {
         Input* in = new Command(commands.at(0));
         inputs = in;
+        in = 0;
         return;
     }
     
