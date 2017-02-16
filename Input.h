@@ -9,6 +9,6 @@
 
 class Input {
 public:
-    virtual bool evaluate();
+    virtual bool evaluate() = 0;
 };
 #endif
