@@ -5,11 +5,11 @@
 #include <cstdlib>
 #include <limits>
 
-#include "Input.h"
-#include "Command.h"
-#include "AND.h"
-#include "OR.h"
-#include "SemiColon.h"
+#include "../header/Input.h"
+#include "../header/Command.h"
+#include "../header/AND.h"
+#include "../header/OR.h"
+#include "../header/SemiColon.h"
 
 using namespace std;
 

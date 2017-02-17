@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <string>
 #include <string.h>
-#include "Command.h"
+#include "../header/Command.h"
 
 using namespace std;
 
