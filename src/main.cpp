@@ -54,6 +54,7 @@ int main () {
             continue;
         }
 
+        // TODO: Create Exit class that handles exit command
         if(!inputs->evaluate()) // If child command fails, exit
             exit(0);
     }
