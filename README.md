@@ -79,5 +79,3 @@ Known Bugs
    quote characters when printing the argument to the console
 3. If exit is present in a line, then no other commands will be executed before 
    the shell exits the program.
-4. Endling a command line with a semicolon will return an error saying that
-   there is no command ("") passed into a connector
