@@ -22,21 +22,6 @@ void makeTree(Input*& inputs, vector<char>& connectors,
 
 Input* makeTree_(vector<char>& connectors, vector<string>& commands);
 
-/*  Note for Ethan!!!
-    I am going to be creating the commands giving you a string NOT a cstring.
-    Also I am going to assume that the class names are as follows:
-        Connector
-        Command
-        AND
-        OR
-        SemiColon
-
-    I have decieded to build the Input tree using recursion becuase it allows
-    us to have a "indefinite" ammount of commands.  This also means that we 
-    I may have to make the parse function return a Input*.  Read my code over
-    and hopefully you understand it. If you have any questions, i'll talk to 
-    you about it (face to face, lul i can't explain in text).
-*/
 
 int main () {
     // Display command line and read input
@@ -69,7 +54,8 @@ int main () {
             continue;
         }
 
-        inputs->evaluate();
+        if(!inputs->evaluate()) // If child command fails
+            exit(0);
     }
     return 0;
 }
