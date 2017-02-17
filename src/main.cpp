@@ -54,7 +54,7 @@ int main () {
             continue;
         }
 
-        if(!inputs->evaluate()) // If child command fails
+        if(!inputs->evaluate()) // If child command fails, exit
             exit(0);
     }
     return 0;
