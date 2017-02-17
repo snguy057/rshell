@@ -175,12 +175,18 @@ void parse(string& userInput, Input*& inputs) {
     // if there are no connectors, then push the command to commands
     commands.push_back(userInput.substr(begin, userInput.size() - begin));
 
+    if (!connectors.empty() && connectors.back() == ';' && commands.back() == "") {
+    	connectors.pop_back();
+    	commands.pop_back();
+    }
+
     // Builds the tree of Inputs
     makeTree(inputs, connectors, commands);
 }
 
 void makeTree(Input*& inputs, vector<char>& connectors, 
                 vector<string>& commands) {
+
     // checks to see if there are any empty commands
     for(unsigned i = 0; i < commands.size(); i++) {
         if (commands.at(i) == "") {
