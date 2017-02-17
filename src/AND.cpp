@@ -1,4 +1,4 @@
-#include "AND.h"
+#include "../header/AND.h"
 
 AND::AND() : left(0), right(0) {}
 

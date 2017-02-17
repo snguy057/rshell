@@ -1,4 +1,4 @@
-#include "SemiColon.h"
+#include "../header/SemiColon.h"
 
 SemiColon::SemiColon() : left(0), right(0) {}
 

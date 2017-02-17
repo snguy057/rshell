@@ -1,4 +1,4 @@
-#include "OR.h"
+#include "../header/OR.h"
 
 OR::OR() : left(0), right(0) {}
 
