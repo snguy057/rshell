@@ -48,32 +48,37 @@ bool Command::evaluate() {
     }
     args[arguments.size()] = NULL;
 
-    int status = 0; // Create location in memory for which waitpid status info 
+    int status; // Create location in memory for which waitpid status info 
                     // is stored in
     pid_t pid = fork(); // Fork() so execvp() doesn't quit program
 
     // If error with fork
-    if (pid == -1)
-        perror("fork");
+    if (pid == -1) {
+        perror("fork failed");
+        exit(1);
+    }
 
     // Child process, calls execvp()
     if (pid == 0) {
         if (execvp(args[0], args) == -1) {
             perror("exec");
-            return false;
+            exit(1);
         }
-    }
-
-    // Parent process
-    if (pid > 0) {
-        if (waitpid(pid, &status, 0) == -1) {
-            perror("wait");
-            return false;
-        }
-        
     }
 
     delete[] args;
+
+    // Parent process
+    if (pid > 0) {
+        waitpid(pid, &status, 0);
+        if (status > 0)
+            return false;
+        else if (WEXITSTATUS(status) == 0)
+            return true;
+        else if (WEXITSTATUS(status) == 1)
+            return false;
+        
+    }
 
     return true;
 }

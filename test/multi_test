@@ -1,0 +1,28 @@
+echo
+echo Beginning multi-command tests
+echo
+echo Single AND:
+ls -l && pwd
+echo Double AND: && echo Second cmd && echo Third cmd
+echo
+echo Single OR:
+invalid || echo Performed second cmd because first failed.
+echo Double OR: || echo Should not print || echo Should print
+echo
+echo Single Semicolon:; echo This should print
+echo Double Semicolon:; echo Running ls; ls
+echo
+echo Testing multiple combinations:
+echo OR, AND:
+invalid || pwd && echo Test passed
+echo AND, OR, OR:
+invalid && echo Should not print || echo Should print || ls -m
+echo AND, semicolon, AND:
+echo Hello && echo world!; pwd && ls -m
+echo semicolon, AND, OR:
+ls -a; pwd && echo Should print || echo Should not print
+echo semicolon, OR, AND:
+echo Before semi; echo After semi || echo Should not print && echo bug
+echo
+echo Exiting now.
+exit
