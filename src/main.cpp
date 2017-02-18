@@ -176,6 +176,11 @@ void parse(string& userInput, Input*& inputs) {
     commands.push_back(userInput.substr(begin, userInput.size() - begin));
 
     if (!connectors.empty() && connectors.back() == ';' && commands.back() == "") {
+        connectors.pop_back();
+        commands.pop_back();
+    }
+
+    if (!connectors.empty() && connectors.back() == ';' && commands.back() == "") {
     	connectors.pop_back();
     	commands.pop_back();
     }
