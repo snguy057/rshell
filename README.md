@@ -60,7 +60,7 @@ Test Scripts
 --------
 Our project includes a series of test scripts designed to ensure proper 
 functionality of our program. In order to run any of these scripts, first 
-navigate to the tests/ director, then enter the following command:
+navigate to the tests/ directory, then enter the following command:
 ```
 ./script
 ```
@@ -74,11 +74,10 @@ exit.sh                #tests exit and commands with exit
 
 Known Bugs
 --------
-1. rshell does not support the cd command
-2. If echo is passed an argument containing quotes, echo does not remove the 
+1. If echo is passed an argument containing quotes, echo does not remove the 
    quote characters when printing the argument to the console
-3. The echo command does not support escape characters (e.g. '\n', '\t')
-4. If a command contains an odd amount of quotes (single or double), an error 
+2. The echo command does not support escape characters (e.g. '\n', '\t')
+3. If a command contains an odd amount of quotes (single or double), an error 
    is printed and no commands are executed.
-5. Piping and redirection is not supported.
-6. Precedence (using parentheses) is not supported.
+4. Piping and redirection is not supported.
+5. Precedence (using parentheses) is not supported.
