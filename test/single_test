@@ -1,0 +1,26 @@
+echo
+echo Beginning single command tests
+echo
+ls -l
+echo
+pwd
+echo
+echo "Echo does not remove quotation marks"
+echo
+echo Echo does ignore connectors in quotes
+echo
+echo "Hello && World || echo;"
+echo
+echo Making a new directory: testdir
+mkdir testdir
+echo Running ls to show testdir
+ls -l
+echo Removing testdir
+rmdir testdir
+echo Running ls to show testdir removed
+ls -l
+echo
+ls -m
+echo
+echo Exiting now.
+exit
