@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <limits>
+#include <unistd.h>
 
 #include "../header/Input.h"
 #include "../header/Command.h"
@@ -28,14 +29,18 @@ int main () {
     string userInput = "";
     Input* inputs = 0;
 
+	char host[256];
+	char* user = getlogin();
+	gethostname(host, 256);
+
     while(1) {
-        cout << "$ ";
+        cout << user << "@" << host << "$ ";
         getline(cin, userInput);
         // cout << userInput << endl;
+
         // checks if there is no input, only spaces, or comments
-        while (userInput == "" || onlySpace(userInput)) {
-            cout << "$ ";
-            getline(cin, userInput);
+        if (userInput == "" || onlySpace(userInput)) {
+            continue;
         }
         
         // Calls parse on user's input
