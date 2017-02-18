@@ -22,7 +22,7 @@ echo Hello && echo world!; pwd && ls -m
 echo semicolon, AND, OR:
 ls -a; pwd && echo Should print || echo Should not print
 echo semicolon, OR, AND:
-echo Before semi; echo After semi || echo Should not print && echo bug
+echo Before semi; echo After semi || echo Should not print && echo Should print
 echo
 echo Exiting now.
 exit

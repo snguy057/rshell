@@ -37,10 +37,6 @@ int main () {
             cout << "$ ";
             getline(cin, userInput);
         }
-
-        // if (userInput == "exit") {
-        //     exit(0);
-        // }
         
         // Calls parse on user's input
         try {
