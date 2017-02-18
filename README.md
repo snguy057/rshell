@@ -59,10 +59,10 @@ Connector Descriptions
 Test Scripts
 --------
 Our project includes a series of test scripts designed to ensure proper 
-functionality of our program. In order to run any of these scripts, enter the 
-following command from the rshell directory:
+functionality of our program. In order to run any of these scripts, first 
+navigate to the tests/ director, then enter the following command:
 ```
-./test/script
+./script
 ```
 where script can be replaced by any of the scripts listed below:
 ```
@@ -77,5 +77,11 @@ Known Bugs
 1. rshell does not support the cd command
 2. If echo is passed an argument containing quotes, echo does not remove the 
    quote characters when printing the argument to the console
-3. If exit is present in a line, then no other commands will be executed before 
-   the shell exits the program.
+3. The echo command does not support escape characters (e.g. '\n', '\t')
+4. If a command is entered ending with a semicolon, an error message that a
+   connector is passed an empty argument is printed and no commands are 
+   executed.
+5. If a command contains an odd amount of quotes (single or double), an error 
+   is printed and no commands are executed.
+6. Piping and redirection is not supported.
+7. Precedence (using parentheses) is not supported.

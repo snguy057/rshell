@@ -44,9 +44,11 @@ bool Command::evaluate() {
         cmd = cmd.substr(0, it+1);
     }
 
+    // Exit check
     if (cmd == "exit")
         exit(0);
 
+    // Conversion to c string, creating char* vector
     char* cmd_cstr = (char*)this->cmd.c_str();
     vector<char*> arguments;
     char* tmp_cstr;
@@ -58,7 +60,8 @@ bool Command::evaluate() {
         tmp_cstr = strtok(NULL, " ");
     }
 
-    char** args = new char*[arguments.size()+1];   // Char* array to be passed to execvp()
+    // Char* array to be passed to execvp()
+    char** args = new char*[arguments.size()+1];
 
     for (unsigned i = 0; i < arguments.size(); i++) {
         args[i] = arguments.at(i);
@@ -83,19 +86,21 @@ bool Command::evaluate() {
         }
     }
 
+    // Deallocating char** b/c no longer needed
     delete[] args;
 
     // Parent process
     if (pid > 0) {
         waitpid(pid, &status, 0);
-        if (status > 0)
+        if (status > 0) // If status returned, execvp failed
             return false;
-        else if (WEXITSTATUS(status) == 0)
+        else if (WEXITSTATUS(status) == 0)  // Successful execution
             return true;
-        else if (WEXITSTATUS(status) == 1)
+        else if (WEXITSTATUS(status) == 1)  // Unsuccessful execution
             return false;
         
     }
 
-    return true;
+    // Shouldn't be hit
+    return false;
 }

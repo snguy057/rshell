@@ -1,0 +1,20 @@
+echo
+echo Beginning commented-command testing
+echo
+ls #-l
+echo
+ls -l #-a
+echo
+echo Valid portion #invalid portion
+echo
+echo Hello world! && pwd#;echo fail
+echo
+touch testfile && ls && echo #Should not print
+#Fully commented line should do nothing
+echo
+Invalid || rm testfile # && mkdir Faildir
+echo
+ls -l #; echo Do not print comments
+echo
+echo Exiting now #; && || ; && ||
+exit
