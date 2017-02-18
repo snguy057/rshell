@@ -181,11 +181,6 @@ void parse(string& userInput, Input*& inputs) {
         commands.pop_back();
     }
 
-    if (!connectors.empty() && connectors.back() == ';' && commands.back() == "") {
-    	connectors.pop_back();
-    	commands.pop_back();
-    }
-
     // Builds the tree of Inputs
     makeTree(inputs, connectors, commands);
 }
