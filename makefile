@@ -1,5 +1,5 @@
 CC=g++
-CC_FLAGS=-Wall -Werror -ansi -pedantic
+CC_FLAGS=-Wall -Werror -ansi -pedantic -g
 PARAMS=main.o Command.o AND.o OR.o SemiColon.o
 
 all: $(PARAMS)

@@ -37,14 +37,7 @@ int main () {
             cout << "$ ";
             getline(cin, userInput);
         }
-
-        if (userInput == "exit") {
-            exit(0);
-        }
-        // Converts input from string to cstring
-        // char userCstr[userInput.size() + 1];
-        // strcpy(userCstr, userInput.c_str());
-
+        
         // Calls parse on user's input
         try {
             parse(userInput, inputs);
@@ -54,9 +47,7 @@ int main () {
             continue;
         }
 
-        // TODO: Create Exit class that handles exit command
-        if(!inputs->evaluate()) // If child command fails, exit
-            exit(0);
+        inputs->evaluate();
     }
     return 0;
 }
@@ -91,7 +82,7 @@ void parse(string& userInput, Input*& inputs) {
     // index on string we are beginning at
     unsigned begin = 0;
 
-    // seraches for comments and resizes the string to all 
+    // searches for comments and resizes the string to all 
     // whitespace and comments
     for (unsigned i = 0; i < userInput.size() && !commentFound; i++) {
         if (userInput.at(i) == '#') {

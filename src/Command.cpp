@@ -10,12 +10,6 @@
 
 using namespace std;
 
-// private:
-//     string cmd;
-// public:
-//     Command(vector<char*> input;
-//     bool evaluate();
-
 Command::Command(string cmd) : cmd(cmd) { }
 
 /* Command::evaluate() utilizes C++ syscalls to execute the proper
@@ -26,11 +20,33 @@ Command::Command(string cmd) : cmd(cmd) { }
  */
 bool Command::evaluate() {
     // Process:
-    // 1) Convert string cmd into a c_str
-    // 2) Create a vector of char*, call strtok() on cmd and fill vector
-    // 3) Create a char* array, fill with vector elements
-    // 4) Execute command using fork() and execvp()
+    // 1) Remove leading and trailing whitespace from cmd
+    // 2) Convert string cmd into a c_str
+    // 3) Create a vector of char*, call strtok() on cmd and fill vector
+    // 4) Create a char* array, fill with vector elements
+    // 5) Execute command using fork() and execvp()
     
+    // Removing leading whitespace
+    if (cmd.at(0) == ' ') {
+        unsigned it = 0;
+        while (cmd.at(it) == ' ') {
+            it++;
+        }
+        cmd = cmd.substr(it);
+    }
+
+    // Removing trailing whitespace
+    if (cmd.at(cmd.size()-1) == ' ') {
+        unsigned it = cmd.size()-1;
+        while (cmd.at(it) == ' ') {
+            it--;
+        }
+        cmd = cmd.substr(0, it+1);
+    }
+
+    if (cmd == "exit")
+        exit(0);
+
     char* cmd_cstr = (char*)this->cmd.c_str();
     vector<char*> arguments;
     char* tmp_cstr;
@@ -41,6 +57,7 @@ bool Command::evaluate() {
         
         tmp_cstr = strtok(NULL, " ");
     }
+
     char** args = new char*[arguments.size()+1];   // Char* array to be passed to execvp()
 
     for (unsigned i = 0; i < arguments.size(); i++) {
@@ -48,32 +65,37 @@ bool Command::evaluate() {
     }
     args[arguments.size()] = NULL;
 
-    int status = 0; // Create location in memory for which waitpid status info 
+    int status; // Create location in memory for which waitpid status info 
                     // is stored in
     pid_t pid = fork(); // Fork() so execvp() doesn't quit program
 
     // If error with fork
-    if (pid == -1)
-        perror("fork");
+    if (pid == -1) {
+        perror("fork failed");
+        exit(1);
+    }
 
     // Child process, calls execvp()
     if (pid == 0) {
         if (execvp(args[0], args) == -1) {
             perror("exec");
-            return false;
+            exit(1);
         }
-    }
-
-    // Parent process
-    if (pid > 0) {
-        if (waitpid(pid, &status, 0) == -1) {
-            perror("wait");
-            return false;
-        }
-        
     }
 
     delete[] args;
+
+    // Parent process
+    if (pid > 0) {
+        waitpid(pid, &status, 0);
+        if (status > 0)
+            return false;
+        else if (WEXITSTATUS(status) == 0)
+            return true;
+        else if (WEXITSTATUS(status) == 1)
+            return false;
+        
+    }
 
     return true;
 }
