@@ -78,10 +78,7 @@ Known Bugs
 2. If echo is passed an argument containing quotes, echo does not remove the 
    quote characters when printing the argument to the console
 3. The echo command does not support escape characters (e.g. '\n', '\t')
-4. If a command is entered ending with a semicolon, an error message that a
-   connector is passed an empty argument is printed and no commands are 
-   executed.
-5. If a command contains an odd amount of quotes (single or double), an error 
+4. If a command contains an odd amount of quotes (single or double), an error 
    is printed and no commands are executed.
-6. Piping and redirection is not supported.
-7. Precedence (using parentheses) is not supported.
+5. Piping and redirection is not supported.
+6. Precedence (using parentheses) is not supported.
