@@ -62,9 +62,9 @@ Our project includes a series of test scripts designed to ensure proper
 functionality of our program. In order to run any of these scripts, first 
 navigate to the tests/ directory, then enter the following command:
 ```
-./script
+./<name_of_script>
 ```
-where script can be replaced by any of the scripts listed below:
+where <name_of_script> can be replaced by any of the scripts listed below:
 ```
 single_command.sh      #tests single commands
 multi_command.sh       #tests commands with connectors (&&, ||, and/or ;)
