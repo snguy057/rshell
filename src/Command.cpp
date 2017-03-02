@@ -3,9 +3,12 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <cstdlib>
 #include <string>
 #include <string.h>
+
+
 #include "../header/Command.h"
 
 using namespace std;
@@ -47,6 +50,20 @@ bool Command::evaluate() {
     // Exit check
     if (cmd == "exit")
         exit(0);
+
+    // Test Command Check
+    if (cmd.at(0) == '[' && cmd.at(cmd.size() - 1) == ']') {
+        cmd.replace(0, 1, "test ");
+        cmd.erase(cmd.size() - 1);
+    }
+
+    if (cmd == "test" || cmd == "test ") {
+        cout << "(FALSE)" << endl;
+        return false;
+    }
+    else if (cmd.substr(0, 5) == "test ") {
+        return testEvaluate(); 
+    }
 
     // Conversion to c string, creating char* vector
     char* cmd_cstr = (char*)this->cmd.c_str();
@@ -103,4 +120,85 @@ bool Command::evaluate() {
 
     // Shouldn't be hit
     return false;
+}
+
+// Helper that executes the test command
+bool Command::testEvaluate() {
+    // clears test and trailing whitespace
+    if (4 < cmd.size() && cmd.at(4) == ' ') {
+        unsigned it = 4;
+        while (it < cmd.size() && cmd.at(it) == ' ') {
+            it++;
+        }
+        if (it < cmd.size()) {
+            cmd = cmd.substr(it);   
+        }
+        else {
+            cout << "(FALSE)" << endl;
+            return false;
+        }
+    }
+
+    string flag = cmd.substr(0, 2);
+
+    struct stat s;
+
+    // checks for a flag
+    if (flag.at(0) == '-') {
+        // Clears whitespace after the flag 
+        if (2 < cmd.size() && cmd.at(2) == ' ') {
+            unsigned it = 2;
+            while (it < cmd.size() && cmd.at(it) == ' ') {
+                it++;
+            }
+            cmd = cmd.substr(it);
+        }
+        
+        // Checks if for a valid flag.
+        if (flag != "-f" && flag != "-d" && flag != "-e") {
+            string er = "Invalid flag passed into the test."; 
+            throw er;
+            return false;
+        }  
+
+        if (stat(cmd.c_str(), &s) == -1) {
+            cout << "(FALSE)" << endl;
+            return false;
+        }
+
+        // Flag is -f
+        if (flag == "-f") {
+            if (S_ISREG(s.st_mode)) {
+                cout << "(TRUE)" << endl;
+                return true;
+            }
+            cout << "(FALSE)" << endl;
+            return false;
+        }
+        // Flag is -d 
+        else if (flag == "-d") {
+            if (S_ISDIR(s.st_mode)) {
+                cout << "(TRUE)" << endl;
+                return true;
+            }
+            cout << "(FALSE)" << endl;
+            return false;
+        }
+        
+        else if (flag == "-e") {
+            cout << "(TRUE)" << endl;
+            return true;
+            
+        }
+    }
+
+    // No flag
+    if (stat(cmd.c_str(), &s) == -1) {
+        cout << "(FALSE)" << endl;
+        return false;
+    }
+    
+    cout << "(TRUE)" << endl;
+    return true;
+    
 }

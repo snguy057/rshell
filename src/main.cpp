@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <limits>
 #include <unistd.h>
+#include <string>
 
 #include "../header/Input.h"
 #include "../header/Command.h"
@@ -46,13 +47,13 @@ int main () {
         // Calls parse on user's input
         try {
             parse(userInput, inputs);
+            inputs->evaluate();
         }
         catch(string s) {
             cout << s << endl;
             continue;
         }
 
-        inputs->evaluate();
     }
     return 0;
 }
@@ -78,6 +79,7 @@ void parse(string& userInput, Input*& inputs) {
     // bool semicolon = 0;
     // bool AND = 0;
     // bool OR = 0;
+    bool closingTest = 0;
 
     bool commandPushed = 0;
 
@@ -122,6 +124,7 @@ void parse(string& userInput, Input*& inputs) {
                 string s = "Error no closingQuote found";
                 throw s;
             }
+            closingQuote = 0;
         }
 
         else if (userInput.at(it) == '\'') {
@@ -139,6 +142,28 @@ void parse(string& userInput, Input*& inputs) {
                 string s = "Error no closingQuote found";
                 throw s;
             }
+            closingQuote = 0;
+        }
+
+        // looks for the test [ ]
+        else if (userInput.at(it) == '[') {
+            // int testBegin = it;
+            it++;
+            while (closingTest == 0 && it < userInput.size()) {
+                if (userInput.at(it) == ']') {
+                    closingTest = 1;
+                    // userInput.erase(it, 1);
+                    // userInput.replace(testBegin, 1, "test "); 
+                }
+                else {
+                    it++;
+                }
+            }
+            if (closingTest == 0) {
+                string s = "Error no closing ']' found";
+                throw s;
+            }
+            closingTest = 0;
         }
 
         // checks for semicolon connector
