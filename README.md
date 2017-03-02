@@ -81,3 +81,4 @@ Known Bugs
    is printed and no commands are executed.
 4. Piping and redirection is not supported.
 5. Precedence (using parentheses) is not supported.
+6. [ [ <directory/file> ] ] returns (FALSE) rather than pushing an error.
