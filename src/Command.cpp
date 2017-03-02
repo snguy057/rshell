@@ -57,7 +57,7 @@ bool Command::evaluate() {
         cmd.erase(cmd.size() - 1);
     }
 
-    else if (cmd == "test" || cmd == "test ") {
+    if (cmd == "test" || cmd == "test ") {
         cout << "(FALSE)" << endl;
         return false;
     }
