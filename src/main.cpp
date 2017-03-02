@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <limits>
 #include <unistd.h>
+#include <string>
 
 #include "../header/Input.h"
 #include "../header/Command.h"
@@ -149,7 +150,7 @@ void parse(string& userInput, Input*& inputs) {
                 if (userInput.at(it) == ']') {
                     closingTest = 1;
                     string testInput = "test ";
-                    testInput.push_back(userInput.substr(begin, it - begin))
+                    testInput += userInput.substr(begin, it - begin);
                     commands.push_back(testInput);
                     begin = it + 1;
                     commandPushed = 1;
