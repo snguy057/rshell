@@ -78,6 +78,7 @@ void parse(string& userInput, Input*& inputs) {
     // bool semicolon = 0;
     // bool AND = 0;
     // bool OR = 0;
+    bool closingTest = 0;
 
     bool commandPushed = 0;
 
@@ -137,6 +138,28 @@ void parse(string& userInput, Input*& inputs) {
             }
             if (closingQuote == 0) {
                 string s = "Error no closingQuote found";
+                throw s;
+            }
+        }
+
+        // looks for the test [ ]
+        else if (userInput.at(it) == '[') {
+            it++;
+            while (closingTest == 0 && it < userInput.size()) {
+                if (userInput.at(it) == ']') {
+                    closingTest = 1;
+                    string testInput = "test ";
+                    testInput.push_back(userInput.substr(begin, it - begin))
+                    commands.push_back(testInput);
+                    begin = it + 1;
+                    commandPushed = 1;
+                }
+                else {
+                    it++;
+                }
+            }
+            if (closingTest == 0) {
+                string s = "Error no closing ']' found";
                 throw s;
             }
         }
