@@ -47,13 +47,13 @@ int main () {
         // Calls parse on user's input
         try {
             parse(userInput, inputs);
+            inputs->evaluate();
         }
         catch(string s) {
             cout << s << endl;
             continue;
         }
 
-        inputs->evaluate();
     }
     return 0;
 }
