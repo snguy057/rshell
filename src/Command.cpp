@@ -52,6 +52,11 @@ bool Command::evaluate() {
         exit(0);
 
     // Test Command Check
+    if (cmd.at(0) == '[' && cmd.at(cmd.size() - 1) == ']') {
+        cmd.replace(0, 1, "test ");
+        cmd.erase(cmd.size() - 1);
+    }
+
     else if (cmd == "test") {
         cout << "(FALSE)" << endl;
         return false;
@@ -125,8 +130,15 @@ bool Command::testEvaluate() {
         while (it < cmd.size() && cmd.at(it) == ' ') {
             it++;
         }
-        cmd = cmd.substr(it);
+        if (it < cmd.size()) {
+            cmd = cmd.substr(it);   
+        }
+        else {
+            cout << "(FALSE)" << endl;
+            return false;
+        }
     }
+
     string flag = cmd.substr(0, 2);
 
     struct stat s;

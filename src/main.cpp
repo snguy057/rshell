@@ -116,9 +116,7 @@ void parse(string& userInput, Input*& inputs) {
                 if (userInput.at(it) == '\"') {
                     closingQuote = 1;
                 }
-                else {
-                    it++;
-                }
+                it++;
             }
             if (closingQuote == 0) {
                 string s = "Error no closingQuote found";
@@ -133,9 +131,7 @@ void parse(string& userInput, Input*& inputs) {
                 if (userInput.at(it) == '\'') {
                     closingQuote = 1;
                 }
-                else {
-                    it++;
-                }
+                it++;
             }
             if (closingQuote == 0) {
                 string s = "Error no closingQuote found";
@@ -145,19 +141,15 @@ void parse(string& userInput, Input*& inputs) {
 
         // looks for the test [ ]
         else if (userInput.at(it) == '[') {
+            // int testBegin = it;
             it++;
             while (closingTest == 0 && it < userInput.size()) {
                 if (userInput.at(it) == ']') {
                     closingTest = 1;
-                    string testInput = "test ";
-                    testInput += userInput.substr(begin, it - begin);
-                    commands.push_back(testInput);
-                    begin = it + 1;
-                    commandPushed = 1;
+                    // userInput.erase(it, 1);
+                    // userInput.replace(testBegin, 1, "test "); 
                 }
-                else {
-                    it++;
-                }
+                it++;
             }
             if (closingTest == 0) {
                 string s = "Error no closing ']' found";
