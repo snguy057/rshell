@@ -18,6 +18,8 @@ private:
 public:
     Command(string cmd);
     bool evaluate();
+
+    bool testEvaluate();
 };
 
 #endif
