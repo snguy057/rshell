@@ -6,12 +6,14 @@
 #include <limits>
 #include <unistd.h>
 #include <string>
+#include <stack>
 
 #include "../header/Input.h"
 #include "../header/Command.h"
 #include "../header/AND.h"
 #include "../header/OR.h"
 #include "../header/SemiColon.h"
+#include "../header/Paren.h"
 
 using namespace std;
 
@@ -22,7 +24,8 @@ void parse(string& userInput, Input*& inputs);
 void makeTree(Input*& inputs, vector<char>& connectors, 
                 vector<string>& commands);
 
-Input* makeTree_(vector<char>& connectors, vector<string>& commands);
+Input* makeTree_(vector<char>& connectors, vector<string>& commands, 
+                Input*& DecorInput);
 
 
 int main () {
@@ -57,6 +60,8 @@ int main () {
     }
     return 0;
 }
+// POTENTIAL SUGGESTION: Move all code below to a separate header file so main
+// file doesn't look so huge
 
 // checks for only spaces or if comments
 bool onlySpace(const string& userInput) {
@@ -190,7 +195,10 @@ void parse(string& userInput, Input*& inputs) {
                     it < (userInput.size() - 1) &&
                     userInput.at(it + 1) == '&') {
             connectors.push_back('&');
-            commands.push_back(userInput.substr(begin, it - begin));
+            string pushCmd = userInput.substr(begin, it - begin);
+            // ADDING EMPTY STRING SKIP LOGIC
+            if (pushCmd != "")
+                commands.push_back(pushCmd);
             begin = it + 2;
             commandPushed = 1;
         }
@@ -200,13 +208,34 @@ void parse(string& userInput, Input*& inputs) {
                     it < (userInput.size() - 1) &&
                     userInput.at(it + 1) == '|') {
             connectors.push_back('|');
-            commands.push_back(userInput.substr(begin, it - begin));
+            string pushCmd = userInput.substr(begin, it - begin);
+            // ADDING EMPTY STRING SKIP LOGIC
+            if (pushCmd != "")
+                commands.push_back(pushCmd);
             begin = it + 2;
+            commandPushed = 1;
+        }
+
+        // checks for '('
+        else if (userInput.at(it) == '(') {
+            connectors.push_back('(');
+            begin = it + 1; // Increment but don't push a cmd
+        }
+
+        // checks of ')'
+        else if (userInput.at(it) == ')') {
+            connectors.push_back(')');
+            string pushCmd = userInput.substr(begin, it - begin);
+            // ADDING EMPTY STRING SKIP LOGIC
+            if (pushCmd != "")
+                commands.push_back(pushCmd);
+            begin = it + 1;
             commandPushed = 1;
         }
     }
     // if there are no connectors, then push the command to commands
-    commands.push_back(userInput.substr(begin, userInput.size() - begin));
+    if (connectors.empty() || connectors.back() != ')')
+        commands.push_back(userInput.substr(begin, userInput.size() - begin));
 
     if (!connectors.empty() && connectors.back() == ';' 
             && commands.back() == "") {
@@ -221,17 +250,26 @@ void parse(string& userInput, Input*& inputs) {
 void makeTree(Input*& inputs, vector<char>& connectors, 
                 vector<string>& commands) {
 
-    // checks to see if there are any empty commands
-    for(unsigned i = 0; i < commands.size(); i++) {
-        if (commands.at(i) == "") {
-            string s = "Error empty arguement(s) passed into a connector";
-            throw s;
+    // NO LONGER NEEDED BECUASE WE CLEAR ANY LEADING WHITESPACE
+    // // checks to see if there are any empty commands
+    // for(unsigned i = 0; i < commands.size(); i++) {
+    //     if (commands.at(i) == "") {
+    //         string s = "Error empty arguement(s) passed into a connector";
+    //         throw s;
+    //     }
+    // }
+
+    // ignores the () when checking for empty arguements.
+    unsigned conSize = connectors.size();
+    for (unsigned i = 0; i < connectors.size(); i++) {
+        if (connectors.at(i) == '(' || connectors.at(i) == ')') {
+            conSize--;
         }
     }
 
     // if there are only connectors and no commands OR if the number
     // of commands is <= number of connectors.
-    if (commands.size() == 0 || commands.size() <= connectors.size()) {
+    if (commands.size() == 0 || commands.size() <= conSize) {
         string s = "Error empty arguement(s) passed into a connector";
         throw s;
     }
@@ -244,29 +282,52 @@ void makeTree(Input*& inputs, vector<char>& connectors,
         in = 0;
         return;
     }
+
+    Input* DecorInput = 0;
     
     // start of recursive calls
-    inputs = makeTree_(connectors, commands);
+    inputs = makeTree_(connectors, commands, DecorInput);
+
+    // SUGGEST: Create while loop to rerun makeTree_ while !connectors.empty()
+    // REASON: When a parentheses decorator is created, makeTree_ returns
+    //      the decorator as a single Input* to inputs without finishing
+    //      the tree for the rest of the command line. Will need to send 
+    //      some flag and potential decorator as extra parameter to makeTree_ 
+    //      if implement this way.
+    while (!connectors.empty()) {
+        DecorInput = inputs;    // If connectors not empty, had DecorInput
+        inputs = makeTree_(connectors, commands, DecorInput);
+    }
+
 }
 
 // a helper function for the recusion
 Input* makeTree_(vector<char>& connectors, 
-                vector<string>& commands) {
+                vector<string>& commands,
+                Input*& DecorInput) {
     // base case, returns a Command
-    if (commands.size() == 1) {
+    if (commands.size() == 1 && connectors.empty()) {
         return new Command(commands.at(0));
     }
 
     // builds the tree based on the connector type. in the end it returns the 
     // top node
+    // Furthermore, if a DecorInput is detected, then the DecorInput is 
+    // automatically set to be the right child of the next connector
     if (connectors.back() == ';') {
         connectors.pop_back();
         SemiColon* con = new SemiColon();
         // con->right = new Command(commands.back());
-        con->setRight(new Command(commands.back()));
-        commands.pop_back();
+        if (DecorInput == 0) {
+            con->setRight(new Command(commands.back()));
+            commands.pop_back();
+        }
+        else {
+            con->setRight(DecorInput);
+            DecorInput = 0;
+        }
         // con->left = makeTree_(connectors, commands);
-        con->setLeft(makeTree_(connectors, commands));
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
         return con;
     }
 
@@ -274,10 +335,16 @@ Input* makeTree_(vector<char>& connectors,
         connectors.pop_back();
         AND* con = new AND();
         // con->right = new Command(commands.back())
-        con->setRight(new Command(commands.back()));
-        commands.pop_back();
+        if (DecorInput == 0) {
+            con->setRight(new Command(commands.back()));
+            commands.pop_back();
+        }
+        else {
+            con->setRight(DecorInput);
+            DecorInput = 0;
+        }
         // con->left = makeTree_(connectors, commands)
-        con->setLeft(makeTree_(connectors, commands));
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
         return con;
     }
 
@@ -285,11 +352,76 @@ Input* makeTree_(vector<char>& connectors,
         connectors.pop_back();
         OR* con = new OR();
         // con->right = new Command(commands.back());
-        con->setRight(new Command(commands.back()));
-        commands.pop_back();
+        if (DecorInput == 0) {
+            con->setRight(new Command(commands.back()));
+            commands.pop_back();
+        }
+        else {
+            con->setRight(DecorInput);
+            DecorInput = 0;
+        }
         // con->left = makeTree_(connectors, commands);
-        con->setLeft(makeTree_(connectors, commands));
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
         return con;
+    }
+
+    if (connectors.back() == ')') {
+        connectors.pop_back();
+        vector<char> subConnectors;
+        stack<char> conStack;   // Stack for copying connecters to subConnectors
+        vector<string> subCommands;
+        stack<string> comStack; // Stack for copying commands to subCommands
+        unsigned parenCnt = 1;  // Counter for keeping track of nested parens
+
+        // Initial push of last command in parentheses
+        if (connectors.back() != ')') {
+            comStack.push(commands.back());
+            commands.pop_back();
+        }
+        
+        while (parenCnt != 0) {
+            if (connectors.back() == '(') {
+                parenCnt--;
+                conStack.push(connectors.back());
+                connectors.pop_back();
+            }
+            else if (connectors.back() == ')') {
+                parenCnt++;
+                conStack.push(connectors.back());
+                connectors.pop_back();
+                if (connectors.back() != ')') {
+                    comStack.push(commands.back());
+                    commands.pop_back();
+                }
+            }
+            else {
+                conStack.push(connectors.back());
+                connectors.pop_back();
+                // If have nested parens, don't push cmd
+                if (connectors.back() != ')') {
+                    comStack.push(commands.back());
+                    commands.pop_back();
+                }
+            }
+        }
+
+        conStack.pop();  // Pop '(' from stack
+
+        // Population of subConnectors and subCommands
+        for (int i = conStack.size(); i > 0; i--) {
+            subConnectors.push_back(conStack.top());
+            conStack.pop();
+        }
+        for (int i = comStack.size(); i > 0; i--) {
+            subCommands.push_back(comStack.top());
+            comStack.pop();
+        }
+
+        // Creation of Paren obj
+        Paren* con = new Paren(makeTree_(subConnectors, subCommands, 
+                                            DecorInput));
+        return con; 
+
     }
 
     return 0;

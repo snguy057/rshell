@@ -1,6 +1,6 @@
 CC=g++
 CC_FLAGS=-Wall -Werror -ansi -pedantic -g
-PARAMS=main.o Command.o AND.o OR.o SemiColon.o
+PARAMS=main.o Command.o AND.o OR.o SemiColon.o Paren.o
 
 all: $(PARAMS)
 	mkdir -p ./bin
@@ -21,6 +21,9 @@ OR.o: src/OR.cpp
 
 SemiColon.o: src/SemiColon.cpp
 	$(CC) $(CC_FLAGS) src/SemiColon.cpp -c
+
+Paren.o: src/Paren.cpp
+	$(CC) $(CC_FLAGS) src/Paren.cpp -c
 
 clean:
 	rm -rf bin
