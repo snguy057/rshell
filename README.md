@@ -80,5 +80,4 @@ Known Bugs
 3. If a command contains an odd amount of quotes (single or double), an error 
    is printed and no commands are executed.
 4. Piping and redirection is not supported.
-5. Precedence (using parentheses) is not supported.
-6. [ [ \<directory/file\> ] ] returns (FALSE) rather than pushing an error.
+5. [ [ \<directory/file\> ] ] returns (FALSE) rather than pushing an error.
