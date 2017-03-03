@@ -250,23 +250,29 @@ void parse(string& userInput, Input*& inputs) {
 void makeTree(Input*& inputs, vector<char>& connectors, 
                 vector<string>& commands) {
 
-    // checks to see if there are any empty commands
-    for(unsigned i = 0; i < commands.size(); i++) {
-        if (commands.at(i) == "") {
-            string s = "Error empty arguement(s) passed into a connector";
-            throw s;
+    // NO LONGER NEEDED BECUASE WE CLEAR ANY LEADING WHITESPACE
+    // // checks to see if there are any empty commands
+    // for(unsigned i = 0; i < commands.size(); i++) {
+    //     if (commands.at(i) == "") {
+    //         string s = "Error empty arguement(s) passed into a connector";
+    //         throw s;
+    //     }
+    // }
+
+    // ignores the () when checking for empty arguements.
+    unsigned conSize = connectors.size();
+    for (unsigned i = 0; i < connectors.size(); i++) {
+        if (connectors.at(i) == '(' || connectors.at(i) == ')') {
+            conSize--;
         }
     }
 
-    // ERROR: Including parentheses increases amount of connectors without
-    //      needing to increase number of commands. Revise this check
-
     // if there are only connectors and no commands OR if the number
     // of commands is <= number of connectors.
-    // if (commands.size() == 0 || commands.size() <= connectors.size()) {
-    //     string s = "Error empty arguement(s) passed into a connector";
-    //     throw s;
-    // }
+    if (commands.size() == 0 || commands.size() <= conSize) {
+        string s = "Error empty arguement(s) passed into a connector";
+        throw s;
+    }
 
     // if there is only one command with no connectors, just return that 
     // command
