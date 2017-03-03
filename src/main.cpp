@@ -80,8 +80,9 @@ void parse(string& userInput, Input*& inputs) {
     // bool AND = 0;
     // bool OR = 0;
     bool closingTest = 0;
-
     bool commandPushed = 0;
+    unsigned openPar = 0; // Counter for opening parentheses
+    unsigned closePar = 0;  // Counter for closing parentheses
 
     vector<char> connectors;
     vector<string> commands;
@@ -96,6 +97,16 @@ void parse(string& userInput, Input*& inputs) {
             userInput = userInput.substr(begin, i - begin);
             commentFound = 1;
         }
+        // Preliminary check for matching parentheses
+        else if (userInput.at(i) == '(')
+            openPar++;
+        else if (userInput.at(i) == ')')
+            closePar++;
+    }
+
+    if (openPar != closePar) {
+        string s = "Error: Uneven amount of parentheses";
+        throw s;
     }
         
     for (unsigned it = 0; it < userInput.size(); it++) {
