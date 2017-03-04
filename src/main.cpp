@@ -109,7 +109,7 @@ void parse(string& userInput, Input*& inputs) {
             closePar++;
     }
 
-    while (userInput.at(userInput.end()) == ' ') {
+    while (userInput.at(userInput.size()-1) == ' ') {
         userInput.erase(userInput.end());
     }
 
