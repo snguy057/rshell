@@ -38,7 +38,7 @@ int main () {
     gethostname(host, 256);
 
     while(1) {
-        cout << user << "@" << host 
+        cout << user << "@" << host; 
         cout << "$ ";
         getline(cin, userInput);
         // cout << userInput << endl;
