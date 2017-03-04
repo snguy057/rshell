@@ -81,3 +81,6 @@ Known Bugs
    is printed and no commands are executed.
 4. Piping and redirection is not supported.
 5. [ [ \<directory/file\> ] ] returns (FALSE) rather than pushing an error.
+6. Nested precedence operators with a command enclosed in parentheses as the
+   "right-child" of the connector will only run the right-child and ignore
+   the rest of the commands preceding it.
