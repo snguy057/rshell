@@ -19,4 +19,5 @@ echo Testing nested parentheses - 4
 ((test -e DNE && echo 2) || ls -l) || (Invalidcmd || (echo 3 && echo 4))
 (test -e random && rm random) && (echo Removed random || ls -l random)
 echo
+echo Exiting now.
 exit

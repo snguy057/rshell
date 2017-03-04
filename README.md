@@ -31,7 +31,9 @@ Valid connectors include:
 If a command includes a # symbol, then everything occuring after the # is 
 regarded as a comment and not executed.
 
-
+UPDATE: ***rshell*** now supports precedence operators '(' and ')', as well as
+implements a specialized operation of the test command, printing the result of
+the test (either (TRUE) or (FALSE)) to the terminal.
 
 It is currently a work in progress and lacking some BASH functionality. As of 
 2/16/2017, the first portion of this project has been implemented but not all 
@@ -58,6 +60,41 @@ Connector Descriptions
 ; Connector: if a command is followed by this connector, then the next command 
    is always executed.
 
+Precedence
+--------
+The precedence operators '(' and ')' allow the encapsulation of combinations of
+commands to run in specific orders. For example:
+```
+echo 1 && echo 2 || echo 3 && echo 4
+```
+Prints 
+```
+1
+2
+4
+```
+to the screen. However, with precedence operators:
+```
+(echo 1 && echo 2) || (echo 3 && echo 4)
+```
+Prints
+```
+1
+2
+```
+to the screen, not executing the commands for echo 3 and echo 4.
+
+Nested precedence is also supported:
+```
+(echo Prints || (echo Does not run echo or ls && ls)) && (echo Runs pwd && pwd)
+```
+The above command will print:
+```
+Prints
+Runs pwd
+.../<currentDir>
+```
+
 Test Scripts
 --------
 Our project includes a series of test scripts designed to ensure proper 
@@ -83,6 +120,5 @@ Known Bugs
    is printed and no commands are executed.
 4. Piping and redirection is not supported.
 5. [ [ \<directory/file\> ] ] returns (FALSE) rather than pushing an error.
-6. Nested precedence operators with a command enclosed in parentheses as the
-   "right-child" of the connector will only run the right-child and ignore
-   the rest of the commands preceding it.
+6. Multiple flags passed into the test command returns (FALSE) rather than
+   throwing an error.
