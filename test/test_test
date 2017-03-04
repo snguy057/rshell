@@ -1,0 +1,27 @@
+echo Beginning of test testing
+echo
+echo Testing "test " command - 5
+test ../src && echo ../src exists
+test -e ../header && echo ../header exists
+test -d ../src && echo ../src is a directory
+test -f ../src || echo ../src is not a file
+test ../invalid || echo ../invalid does not exist
+echo
+echo Testing [ ] notation - 3
+[../src/main.cpp] && echo ../src/main.cpp exists
+[ -d ../src/main.cpp] || echo ../src/main.cpp is not a directory
+[ -f ../src/main.cpp ] && echo ../src/main.cpp is a file
+echo
+echo Testing invalid flags - 2
+[ -i ../header ]
+test -i ../header
+echo
+echo Testing no parameters - 6
+[ ] 
+[]
+test
+[ -e ]
+[ -f ]
+[ -d ]
+echo
+exit
