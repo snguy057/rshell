@@ -109,6 +109,10 @@ void parse(string& userInput, Input*& inputs) {
             closePar++;
     }
 
+    while (userInput.back() == ' ') {
+        userInput.erase(userInput.end());
+    }
+
     if (openPar != closePar) {
         string s = "Error: Uneven amount of parentheses";
         throw s;
