@@ -33,12 +33,13 @@ int main () {
     string userInput = "";
     Input* inputs = 0;
 
-    char host[256];
-    char* user = getlogin();
-    gethostname(host, 256);
+    // char host[256];
+    // char* user = getlogin();
+    // gethostname(host, 256);
 
     while(1) {
-        cout << user << "@" << host << "$ ";
+        // cout << user << "@" << host 
+        cout << "$ ";
         getline(cin, userInput);
         // cout << userInput << endl;
 
@@ -259,15 +260,6 @@ void parse(string& userInput, Input*& inputs) {
 void makeTree(Input*& inputs, vector<char>& connectors, 
                 vector<string>& commands) {
 
-    // NO LONGER NEEDED BECUASE WE CLEAR ANY LEADING WHITESPACE
-    // // checks to see if there are any empty commands
-    // for(unsigned i = 0; i < commands.size(); i++) {
-    //     if (commands.at(i) == "") {
-    //         string s = "Error empty arguement(s) passed into a connector";
-    //         throw s;
-    //     }
-    // }
-
     // ignores the () when checking for empty arguements.
     unsigned conSize = connectors.size();
     for (unsigned i = 0; i < connectors.size(); i++) {
@@ -337,7 +329,8 @@ Input* makeTree_(vector<char>& connectors,
         }
         // con->left = makeTree_(connectors, commands);
         con->setLeft(makeTree_(connectors, commands, DecorInput));
-        return con;
+        DecorInput = con;
+        return DecorInput;
     }
 
     if (connectors.back() == '&') {
@@ -354,7 +347,8 @@ Input* makeTree_(vector<char>& connectors,
         }
         // con->left = makeTree_(connectors, commands)
         con->setLeft(makeTree_(connectors, commands, DecorInput));
-        return con;
+        DecorInput = con;
+        return DecorInput;
     }
 
     if (connectors.back() == '|') {
@@ -371,7 +365,8 @@ Input* makeTree_(vector<char>& connectors,
         }
         // con->left = makeTree_(connectors, commands);
         con->setLeft(makeTree_(connectors, commands, DecorInput));
-        return con;
+        DecorInput = con;
+        return DecorInput;
     }
 
     if (connectors.back() == ')') {
@@ -429,7 +424,13 @@ Input* makeTree_(vector<char>& connectors,
         // Creation of Paren obj
         Paren* con = new Paren(makeTree_(subConnectors, subCommands, 
                                             DecorInput));
-        return con; 
+        DecorInput = con;
+        
+        while (!connectors.empty()) {
+            DecorInput = makeTree_(connectors, commands, DecorInput);
+        }
+
+        return DecorInput; 
 
     }
 
