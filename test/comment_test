@@ -1,20 +1,23 @@
 echo
 echo Beginning commented-command testing
 echo
+echo Testing single command comments - 3
 ls #-l
-echo
 ls -l #-a
-echo
 echo Valid portion #invalid portion
 echo
+echo Testing connected commands - 3
 echo Hello world! && pwd#;echo fail
-echo
 touch testfile && ls && echo #Should not print
 #Fully commented line should do nothing
-echo
 Invalid || rm testfile # && mkdir Faildir
-echo
 ls -l #; echo Do not print comments
 echo
+echo Testing with precedence and test commands - 5
+(echo 1 && echo 2) || (echo 3 || echo 4) #Should print 1, 2
+(test -e ../src && echo "../src exists") || (pwd && touch errorfile) #&& test
+((echo A && echo B) || (echo C && echo D)) #|| pwd
+(test || (echo Running ls && ls)) # Should print "Running ls" and run ls
+(test -e noDirectory) # Should print (FALSE)
 echo Exiting now #; && || ; && ||
 exit
