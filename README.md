@@ -31,6 +31,8 @@ Valid connectors include:
 If a command includes a # symbol, then everything occuring after the # is 
 regarded as a comment and not executed.
 
+
+
 It is currently a work in progress and lacking some BASH functionality. As of 
 2/16/2017, the first portion of this project has been implemented but not all 
 bugs have been resolved. See below for Known Bugs.
@@ -81,3 +83,5 @@ Known Bugs
    is printed and no commands are executed.
 4. Piping and redirection is not supported.
 5. [ [ \<directory/file\> ] ] returns (FALSE) rather than pushing an error.
+6. Multiple nested precedence operators will run only the right-most inner 
+   command enclosed in parentheses
