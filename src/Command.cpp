@@ -139,6 +139,14 @@ bool Command::testEvaluate() {
         }
     }
 
+    if (cmd.at(cmd.size() - 1) == ' ') {
+        unsigned it = cmd.size() - 1;    
+        while (cmd.at(it) == ' ') {
+            it--;
+        }
+        cmd = cmd.substr(0, it + 1);
+    }
+
     string flag = cmd.substr(0, 2);
 
     struct stat s;
