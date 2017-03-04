@@ -1,0 +1,22 @@
+echo Beginning precedence testing
+echo
+echo Testing single enclosed commands - 3
+(echo Test 1)
+(pwd)
+(test -e ../src)
+echo
+echo Testing pairs of enclosed commands - 6
+(ls -l) && (pwd)
+(test -d ../header) || (echo "../header does not exist")
+(echo A && echo B)
+(echo Print || echo Do not print)
+(echo 1 && echo 2) || (echo 3 && echo 4)
+(pwd || test) && (touch random && ls)
+echo
+echo Testing nested parentheses - 4
+((echo 1 && echo 2) || ls) || (echo Should not print)
+(echo A) && (test -e DNE || (echo 3 && echo 4))
+((test -e DNE && echo 2) || ls -l) || (Invalidcmd || (echo 3 && echo 4))
+(test -e random && rm random) && (echo Removed random || ls -l random)
+echo
+exit
