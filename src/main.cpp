@@ -33,12 +33,12 @@ int main () {
     string userInput = "";
     Input* inputs = 0;
 
-    char host[256];
-    char* user = getlogin();
-    gethostname(host, 256);
+    // char host[256];
+    // char* user = getlogin();
+    // gethostname(host, 256);
 
     while(1) {
-        cout << user << "@" << host << "$ ";
+        cout /*<< user << "@" << host */<< "$ ";
         getline(cin, userInput);
         // cout << userInput << endl;
 
