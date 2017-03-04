@@ -109,8 +109,13 @@ void parse(string& userInput, Input*& inputs) {
             closePar++;
     }
 
-    while (userInput.at(userInput.size()-1) == ' ') {
-        userInput.erase(userInput.size()-1);
+    // Remove trailing white space
+    if (userInput.at(userInput.size()-1) == ' ') {
+        unsigned it = userInput.size()-1;
+        while (userInput.at(it) == ' ') {
+            it--;
+        }
+        userInput = userInput.substr(0, it+1);
     }
 
     if (openPar != closePar) {
