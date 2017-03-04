@@ -237,8 +237,8 @@ void parse(string& userInput, Input*& inputs) {
     if (connectors.empty() || connectors.back() != ')')
         commands.push_back(userInput.substr(begin, userInput.size() - begin));
 
-    if (!connectors.empty() && connectors.back() == ';' 
-            && commands.back() == "") {
+    if (!connectors.empty() && (connectors.back() == ';' 
+            || connectors.back() == ')') && commands.back() == "") {
         connectors.pop_back();
         commands.pop_back();
     }
