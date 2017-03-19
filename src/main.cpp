@@ -217,7 +217,7 @@ void parse(string& userInput, Input*& inputs) {
         else if (userInput.at(it) == '|' &&
                     it < (userInput.size() - 1) &&
                     userInput.at(it + 1) == '|') {
-            connectors.push_back('|');
+            connectors.push_back('o');
             string pushCmd = userInput.substr(begin, it - begin);
             // ADDING EMPTY STRING SKIP LOGIC
             if (pushCmd != "")
@@ -241,6 +241,29 @@ void parse(string& userInput, Input*& inputs) {
                 commands.push_back(pushCmd);
             begin = it + 1;
             commandPushed = 1;
+        }
+
+        // checks for '<'
+        else if (userInput.at(it) == '<') {
+            connectors.push_back('<');
+            string pushCmd = userInput.substr(begin, it - begin);
+        }
+
+        // checks for '>' and ">>"
+        else if (userInput.at(it) == '>') {
+            if (it < (userInput.size() - 1) && userInput.at(it + 1) == '>') {
+                connectors.push_back('d')
+            }
+            else {
+                connectors.push_back('<');
+            }
+            string pushCmd = userInput.substr(begin, it - begin);
+        }
+
+        // checks for '|'
+        else if (userInput.at(it) == '|') {
+            connectors.push_back('|');
+            string pushCmd = userInput.substr(begin, it - begin);
         }
     }
     // if there are no connectors, then push the command to commands
@@ -351,7 +374,7 @@ Input* makeTree_(vector<char>& connectors,
         return DecorInput;
     }
 
-    if (connectors.back() == '|') {
+    if (connectors.back() == 'o') {
         connectors.pop_back();
         OR* con = new OR();
         // con->right = new Command(commands.back());
@@ -432,6 +455,55 @@ Input* makeTree_(vector<char>& connectors,
 
         return DecorInput; 
 
+    }
+
+    // If the connector is a <, >, >> then the right child will be a
+    // string representing the file path.
+    if (connectors.back() == '<') {
+        connectors.pop_back();
+        Left* con = new Left();
+        con->right = commands.back();
+        commands.pop_back();
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
+        DecorInput = con;
+        return DecorInput;
+    }
+
+    if (connectors.back() == '>') {
+        connectors.pop_back();
+        Right* con = new Right();
+        con->right = commands.back();
+        commands.pop_back();
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
+        DecorInput = con;
+        return DecorInput;
+    }
+
+    if (connectors.back() == 'd') {
+        connectors.pop_back();
+        Dright* con = new Dright();
+        con->right = commands.back();
+        commands.pop_back();
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
+        DecorInput = con;
+        return DecorInput;
+    }
+
+    // Pipe builds like the other connectors.
+    if (connectors.back() == '|') {
+        connectors.pop_back();
+        Pipe* con = new Pipe();
+        if (DecorInput == 0) {
+            con->setRight(new Command(commands.back()));
+            commands.pop_back();
+        }
+        else {
+            con->setRight(DecorInput);
+            DecorInput = 0;
+        }
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
+        DecorInput = con;
+        return DecorInput;
     }
 
     return 0;
