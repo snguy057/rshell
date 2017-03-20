@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string>
 
+using namespace std;
+
 class Pipe : public Input {
 private:
     Input* left;
