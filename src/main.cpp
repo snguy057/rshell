@@ -251,23 +251,41 @@ void parse(string& userInput, Input*& inputs) {
         else if (userInput.at(it) == '<') {
             connectors.push_back('<');
             string pushCmd = userInput.substr(begin, it - begin);
+            // ADDING EMPTY STRING SKIP LOGIC
+            if (pushCmd != "")
+                commands.push_back(pushCmd);
+            begin = it + 1;
+            commandPushed = 1;
         }
 
         // checks for '>' and ">>"
-        else if (userInput.at(it) == '>') {
+        else if (userInput.at(it) == '>') { 
+            string pushCmd = userInput.substr(begin, it - begin);
+
             if (it < (userInput.size() - 1) && userInput.at(it + 1) == '>') {
                 connectors.push_back('d');
+                begin = it + 2;
             }
             else {
                 connectors.push_back('<');
+                begin = it + 1;
             }
-            string pushCmd = userInput.substr(begin, it - begin);
+
+            // ADDING EMPTY STRING SKIP LOGIC
+            if (pushCmd != "")
+                commands.push_back(pushCmd);
+            commandPushed = 1;
         }
 
         // checks for '|'
         else if (userInput.at(it) == '|') {
             connectors.push_back('|');
             string pushCmd = userInput.substr(begin, it - begin);
+            // ADDING EMPTY STRING SKIP LOGIC
+            if (pushCmd != "")
+                commands.push_back(pushCmd);
+            begin = it + 1;
+            commandPushed = 1;
         }
     }
     // if there are no connectors, then push the command to commands
