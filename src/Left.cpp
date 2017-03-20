@@ -49,7 +49,7 @@ bool Left::evaluate() {
 
 	// Restore std output conditions
 	close(0);
-	dup(saveIn);
+	dup2(saveIn, 0);
 	
 	return success;
 }
