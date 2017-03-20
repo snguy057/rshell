@@ -3,7 +3,7 @@
 #include <fcntl.h>
 #include "../header/Dright.h"
 
-Dright::Dright() : left(0), right(0) {}
+Dright::Dright() : left(0), right("") {}
 
 void Dright::setLeft(Input* l) { left = l; }
 

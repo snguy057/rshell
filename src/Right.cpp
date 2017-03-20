@@ -3,7 +3,7 @@
 #include <fcntl.h>
 #include "../header/Right.h"
 
-Right::Right() : left(0), right(0) {}
+Right::Right() : left(0), right("") {}
 
 void Right::setLeft(Input* l) { left = l; }
 
