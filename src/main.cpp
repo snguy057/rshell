@@ -14,6 +14,10 @@
 #include "../header/OR.h"
 #include "../header/SemiColon.h"
 #include "../header/Paren.h"
+#include "../header/Left.h"
+#include "../header/Right.h"
+#include "../header/Dright.h"
+#include "../header/Pipe.h"
 
 using namespace std;
 
@@ -252,7 +256,7 @@ void parse(string& userInput, Input*& inputs) {
         // checks for '>' and ">>"
         else if (userInput.at(it) == '>') {
             if (it < (userInput.size() - 1) && userInput.at(it + 1) == '>') {
-                connectors.push_back('d')
+                connectors.push_back('d');
             }
             else {
                 connectors.push_back('<');
@@ -282,6 +286,13 @@ void parse(string& userInput, Input*& inputs) {
 
 void makeTree(Input*& inputs, vector<char>& connectors, 
                 vector<string>& commands) {
+
+    // Remove empty commands
+    for (unsigned i = 0; i < commands.size(); i++) {
+        if (commands.at(i) == "") {
+            commands.erase(commands.begin() + i - 1);
+        }
+    }
 
     // ignores the () when checking for empty arguements.
     unsigned conSize = connectors.size();
@@ -462,7 +473,7 @@ Input* makeTree_(vector<char>& connectors,
     if (connectors.back() == '<') {
         connectors.pop_back();
         Left* con = new Left();
-        con->right = commands.back();
+        con->setRight(commands.back());
         commands.pop_back();
         con->setLeft(makeTree_(connectors, commands, DecorInput));
         DecorInput = con;
@@ -472,7 +483,7 @@ Input* makeTree_(vector<char>& connectors,
     if (connectors.back() == '>') {
         connectors.pop_back();
         Right* con = new Right();
-        con->right = commands.back();
+        con->setRight(commands.back());
         commands.pop_back();
         con->setLeft(makeTree_(connectors, commands, DecorInput));
         DecorInput = con;
@@ -482,7 +493,7 @@ Input* makeTree_(vector<char>& connectors,
     if (connectors.back() == 'd') {
         connectors.pop_back();
         Dright* con = new Dright();
-        con->right = commands.back();
+        con->setRight(commands.back());
         commands.pop_back();
         con->setLeft(makeTree_(connectors, commands, DecorInput));
         DecorInput = con;

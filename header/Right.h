@@ -1,7 +1,12 @@
 #ifndef RIGHT_H
 #define RIGHT_H
 
+#include <unistd.h>
+#include <string>
+#include <stdio.h>
 #include "Input.h"
+
+using namespace std;
 
 class Right : public Input {
 private:
@@ -9,7 +14,6 @@ private:
     string right;
 public:
     Right();
-    // AND(Input* l, Input* r);
     void setLeft(Input* l);
     void setRight(string r);
     bool evaluate();

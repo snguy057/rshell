@@ -9,7 +9,6 @@ private:
     Input* right;
 public:
     Pipe();
-    // OR(Input* l, Input* r);
     void setLeft(Input* l);
     void setRight(Input* r);
     bool evaluate();

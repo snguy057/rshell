@@ -1,3 +1,6 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "../header/Right.h"
 
 Right::Right() : left(0), right(0) {}
