@@ -267,7 +267,7 @@ void parse(string& userInput, Input*& inputs) {
                 begin = it + 2;
             }
             else {
-                connectors.push_back('<');
+                connectors.push_back('>');
                 begin = it + 1;
             }
 
