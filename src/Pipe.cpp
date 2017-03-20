@@ -58,6 +58,15 @@ bool Pipe::evaluate() {
         return false;
     }
 
+    if (close(pipe1[0]) == -1) {
+        perror("close 0");
+        return false;
+    }
+    if (close(pipe1[1]) == -1) {
+        perror("close 1");
+        return false;
+    }
+
     // 8) return value
     if (leftside && rightside)
         return true;
