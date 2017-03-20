@@ -4,15 +4,16 @@
 #include "Input.h"
 #include <unistd.h>
 #include <stdio.h>
+#include <string>
 
 class Pipe : public Input {
 private:
     Input* left;
-    Input* right;
+    string right;
 public:
     Pipe();
     void setLeft(Input* l);
-    void setRight(Input* r);
+    void setRight(string r);
     bool evaluate();
 };
 

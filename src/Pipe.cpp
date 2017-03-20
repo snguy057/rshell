@@ -3,11 +3,11 @@
 #include <fcntl.h>
 #include "../header/Pipe.h"
 
-Pipe::Pipe() : left(0), right(0) {}
+Pipe::Pipe() : left(0), right("") {}
 
 void Pipe::setLeft(Input* l) { left = l; }
 
-void Pipe::setRight(Input* r) { right = r; }
+void Pipe::setRight(string r) { right = r; }
 
 bool Pipe::evaluate() {
 	// 1) pipe

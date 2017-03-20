@@ -522,14 +522,8 @@ Input* makeTree_(vector<char>& connectors,
     if (connectors.back() == '|') {
         connectors.pop_back();
         Pipe* con = new Pipe();
-        if (DecorInput == 0) {
-            con->setRight(new Command(commands.back()));
-            commands.pop_back();
-        }
-        else {
-            con->setRight(DecorInput);
-            DecorInput = 0;
-        }
+        con->setRight(commands.back());
+        commands.pop_back();
         con->setLeft(makeTree_(connectors, commands, DecorInput));
         DecorInput = con;
         return DecorInput;
