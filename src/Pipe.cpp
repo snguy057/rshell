@@ -28,6 +28,10 @@ bool Pipe::evaluate() {
     // 3) run left
     bool leftside = left->evaluate();
 
+    if (!leftside) {
+        return false;
+    }
+
     // 4) restore standard output
     if (dup2(saveOut, 1) == -1) {
         perror("leftside restore");
