@@ -2,6 +2,8 @@
 #define PIPE_H
 
 #include "Input.h"
+#include <unistd.h>
+#include <stdio.h>
 
 class Pipe : public Input {
 private:
