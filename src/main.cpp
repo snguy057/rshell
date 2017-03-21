@@ -14,6 +14,10 @@
 #include "../header/OR.h"
 #include "../header/SemiColon.h"
 #include "../header/Paren.h"
+#include "../header/Left.h"
+#include "../header/Right.h"
+#include "../header/Dright.h"
+#include "../header/Pipe.h"
 
 using namespace std;
 
@@ -217,7 +221,7 @@ void parse(string& userInput, Input*& inputs) {
         else if (userInput.at(it) == '|' &&
                     it < (userInput.size() - 1) &&
                     userInput.at(it + 1) == '|') {
-            connectors.push_back('|');
+            connectors.push_back('o');
             string pushCmd = userInput.substr(begin, it - begin);
             // ADDING EMPTY STRING SKIP LOGIC
             if (pushCmd != "")
@@ -242,6 +246,47 @@ void parse(string& userInput, Input*& inputs) {
             begin = it + 1;
             commandPushed = 1;
         }
+
+        // checks for '<'
+        else if (userInput.at(it) == '<') {
+            connectors.push_back('<');
+            string pushCmd = userInput.substr(begin, it - begin);
+            // ADDING EMPTY STRING SKIP LOGIC
+            if (pushCmd != "")
+                commands.push_back(pushCmd);
+            begin = it + 1;
+            commandPushed = 1;
+        }
+
+        // checks for '>' and ">>"
+        else if (userInput.at(it) == '>') { 
+            string pushCmd = userInput.substr(begin, it - begin);
+
+            if (it < (userInput.size() - 1) && userInput.at(it + 1) == '>') {
+                connectors.push_back('d');
+                begin = it + 2;
+            }
+            else {
+                connectors.push_back('>');
+                begin = it + 1;
+            }
+
+            // ADDING EMPTY STRING SKIP LOGIC
+            if (pushCmd != "")
+                commands.push_back(pushCmd);
+            commandPushed = 1;
+        }
+
+        // checks for '|'
+        else if (userInput.at(it) == '|') {
+            connectors.push_back('|');
+            string pushCmd = userInput.substr(begin, it - begin);
+            // ADDING EMPTY STRING SKIP LOGIC
+            if (pushCmd != "")
+                commands.push_back(pushCmd);
+            begin = it + 1;
+            commandPushed = 1;
+        }
     }
     // if there are no connectors, then push the command to commands
     if (connectors.empty() || connectors.back() != ')')
@@ -252,13 +297,29 @@ void parse(string& userInput, Input*& inputs) {
         connectors.pop_back();
         commands.pop_back();
     }
-
+    int cnt = 0;
+    for (unsigned i = 0; i < connectors.size(); i++) {
+        if (connectors.at(i) == '|') {
+            cnt++;
+        }
+        if (cnt > 1) {
+            string s = "Broken";
+            throw s;
+        }
+    }
     // Builds the tree of Inputs
     makeTree(inputs, connectors, commands);
 }
 
 void makeTree(Input*& inputs, vector<char>& connectors, 
                 vector<string>& commands) {
+
+    // Remove empty commands
+    for (unsigned i = 0; i < commands.size(); i++) {
+        if (commands.at(i) == "") {
+            commands.erase(commands.begin() + i - 1);
+        }
+    }
 
     // ignores the () when checking for empty arguements.
     unsigned conSize = connectors.size();
@@ -351,7 +412,7 @@ Input* makeTree_(vector<char>& connectors,
         return DecorInput;
     }
 
-    if (connectors.back() == '|') {
+    if (connectors.back() == 'o') {
         connectors.pop_back();
         OR* con = new OR();
         // con->right = new Command(commands.back());
@@ -432,6 +493,49 @@ Input* makeTree_(vector<char>& connectors,
 
         return DecorInput; 
 
+    }
+
+    // If the connector is a <, >, >> then the right child will be a
+    // string representing the file path.
+    if (connectors.back() == '<') {
+        connectors.pop_back();
+        Left* con = new Left();
+        con->setRight(commands.back());
+        commands.pop_back();
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
+        DecorInput = con;
+        return DecorInput;
+    }
+
+    if (connectors.back() == '>') {
+        connectors.pop_back();
+        Right* con = new Right();
+        con->setRight(commands.back());
+        commands.pop_back();
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
+        DecorInput = con;
+        return DecorInput;
+    }
+
+    if (connectors.back() == 'd') {
+        connectors.pop_back();
+        Dright* con = new Dright();
+        con->setRight(commands.back());
+        commands.pop_back();
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
+        DecorInput = con;
+        return DecorInput;
+    }
+
+    // Pipe builds like the other connectors.
+    if (connectors.back() == '|') {
+        connectors.pop_back();
+        Pipe* con = new Pipe();
+        con->setRight(commands.back());
+        commands.pop_back();
+        con->setLeft(makeTree_(connectors, commands, DecorInput));
+        DecorInput = con;
+        return DecorInput;
     }
 
     return 0;

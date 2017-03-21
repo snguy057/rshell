@@ -15,6 +15,10 @@ using namespace std;
 
 Command::Command(string cmd) : cmd(cmd) { }
 
+string Command::getCmd() {
+    return cmd;
+}
+
 /* Command::evaluate() utilizes C++ syscalls to execute the proper
  * bash command inputted by the user. If any syscall fails, the 
  * function calls perror and prints a message pertaining to where
