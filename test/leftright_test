@@ -15,6 +15,8 @@ cat < outfile2
 #Overwrite outfile1 with contents in current dir.
 ls ../ > outfile1
 cat < outfile1
+ps > outfile2
+cat < outfile2
 rm outfile1
 rm outfile2
 exit
