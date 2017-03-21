@@ -15,7 +15,7 @@ void Pipe::setLeft(Input* l) { left = l; }
 void Pipe::setRight(string r) { right = r; }
 
 bool Pipe::evaluate() {
-	// 1) pipe
+    // 1) pipe
     int pipe1[2];
     pipe(pipe1);
     
@@ -81,7 +81,25 @@ bool Pipe::evaluate() {
     // 3) run left
     bool leftside = left->evaluate();
 
+    // 4) restore standard OUTPUT
+    if (dup2(saveOut, 1) == -1) {
+        perror("leftside restore");
+        return false;
+    }
+
+    if (close(pipe1[1]) == -1) {
+        perror("close 1");
+        return false;
+    }
+
     if (!leftside) {
+        return false;
+    }
+
+    
+    // 5) overwrite standard input -- SAVE
+    if (dup2(pipe1[0], 0) == -1) {
+        perror("in dup2");
         return false;
     }
 
@@ -95,27 +113,6 @@ bool Pipe::evaluate() {
 
     // Child process, calls execvp()
     if (pid == 0) {
-        // 4) restore standard output
-        if (dup2(saveOut, 1) == -1) {
-            perror("leftside restore");
-            return false;
-        }
-
-        // 5) overwrite standard input -- SAVE
-        if (dup2(pipe1[0], 0) == -1) {
-            perror("in dup2");
-            return false;
-        }
-
-        if (close(pipe1[0]) == -1) {
-            perror("close 0");
-            return false;
-        }
-        if (close(pipe1[1]) == -1) {
-            perror("close 1");
-            return false;
-        }
-
         // Execute right side
         if (execvp(args[0], args) == -1) {
             perror("exec");
@@ -130,31 +127,26 @@ bool Pipe::evaluate() {
 
     // Parent process
     if (pid > 0) {
-        // 7) restore standard input
-        if (dup2(saveIn, 0) == -1) {
-            perror("rightside restore");
-            return false;
-        }
         if (close(pipe1[0]) == -1) {
             perror("close 0");
             return false;
         }
-        if (close(pipe1[1]) == -1) {
-            perror("close 1");
+
+        // 7) restore standard input
+        waitpid(pid, &status, 0);
+
+        if (dup2(saveIn, 0) == -1) {
+            perror("rightside restore");
             return false;
-        }
-
-        // waitpid(pid, &status, 0);
-
+        }        
         if (status > 0) // If status returned, execvp failed
             return false;
         else if (WEXITSTATUS(status) == 0)  // Successful execution
             return true;
         else if (WEXITSTATUS(status) == 1)  // Unsuccessful execution
             return false;
-        
-    }
 
+    }
     // Shouldn't be hit
     return false;
 }

@@ -45,7 +45,7 @@ int main () {
         cout << user << "@" << host; 
         cout << "$ ";
         getline(cin, userInput);
-        // cout << userInput << endl;
+        cout << userInput << endl;
 
         // checks if there is no input, only spaces, or comments
         if (userInput == "" || onlySpace(userInput)) {
