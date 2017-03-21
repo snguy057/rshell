@@ -17,6 +17,7 @@ private:
     string cmd;
 public:
     Command(string cmd);
+    string getCmd();
     bool evaluate();
 
     bool testEvaluate();
