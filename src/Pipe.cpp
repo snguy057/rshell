@@ -117,7 +117,6 @@ bool Pipe::evaluate() {
 
     // Parent process
     if (pid > 0) {
-        waitpid(pid, &status, 0);
         // 7) restore standard input
         if (dup2(saveIn, 0) == -1) {
             perror("rightside restore");
@@ -132,6 +131,7 @@ bool Pipe::evaluate() {
             perror("close 1");
             return false;
         }
+        waitpid(pid, &status, 0);
         if (status > 0) // If status returned, execvp failed
             return false;
         else if (WEXITSTATUS(status) == 0)  // Successful execution
