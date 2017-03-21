@@ -35,6 +35,9 @@ UPDATE: ***rshell*** now supports precedence operators '(' and ')', as well as
 implements a specialized operation of the test command, printing the result of
 the test (either (TRUE) or (FALSE)) to the terminal.
 
+UPDATE2: **rshell** now supports IO redirection and limited piping. Mulitple
+pipes is broken.
+
 It is currently a work in progress and lacking some BASH functionality. As of 
 2/16/2017, the first portion of this project has been implemented but not all 
 bugs have been resolved. See below for Known Bugs.
@@ -94,6 +97,46 @@ Prints
 Runs pwd
 .../<currentDir>
 ```
+Redirection
+--------
+The redirection operators '<', '>', and '<<' are now supported in rshell. 
+These operators allow for the contents of files or outputs of commands to be 
+redirected into other commands as inputted by the user.
+
+For example, the following command:
+```
+echo My text > newFile
+```
+prints the text "My text" into the file named "newFile". If "newFile" does not
+exist, a file of the name "newFile" will be created and the text "My text" will
+be written into it. If "newFile" does exist, then its contents will be 
+overwritten by the new output being redirected into it.
+
+The '>>' operator functions in a similar manner to the '>' operator, with the
+exception that if the file already exists, the '>>' operator only appends the
+output to the file instead of overwrites it.
+
+The command:
+```
+cat < existingInputFile
+```
+allows the command on the left to accept input from "existingInputFile" 
+instead of user input from the command line. This can be useful in scripts that
+require arguments, as the command:
+```
+test.sh < test.txt
+```
+would pass in the contents of "test.txt" as input to the test.sh script without
+the user being required to type in the content of test.txt by hand.
+
+The pipe operator, '|', is also supported, passing in the output of the previous
+command as input to the next command. For example
+```
+cat existingInputFile | tr A-Z a-z
+```
+takes the output of cat (which is the contents of existingInputFile) and passes
+it to "tr A-Z a-z", a translate command with will turn all capital letters into
+lowercase then output the translated output to the command prompt.
 
 Test Scripts
 --------
@@ -118,7 +161,9 @@ Known Bugs
 2. The echo command does not support escape characters (e.g. '\n', '\t')
 3. If a command contains an odd amount of quotes (single or double), an error 
    is printed and no commands are executed.
-4. Piping and redirection is not supported.
-5. [ [ \<directory/file\> ] ] returns (FALSE) rather than pushing an error.
-6. Multiple flags passed into the test command returns (FALSE) rather than
+4. [ [ \<directory/file\> ] ] returns (FALSE) rather than pushing an error.
+5. Multiple flags passed into the test command returns (FALSE) rather than
    throwing an error.
+6. Multiple pipes in a command line is broken and prevented. When trying to
+   when implementing multiple pipes, the parent process would be indefinitly
+   waiting for the child to terminate.
