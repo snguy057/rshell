@@ -135,7 +135,7 @@ bool Pipe::evaluate() {
             return false;
         }
 
-        waitpid(pid, &status, 0);
+        // waitpid(pid, &status, 0);
 
         if (status > 0) // If status returned, execvp failed
             return false;
