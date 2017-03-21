@@ -1,0 +1,20 @@
+echo
+echo "Beginning <, >, >> tests"
+echo
+echo test text > outfile1
+echo
+echo second test text > outfile2
+echo
+chmod 711 outfile1
+chmod 711 outfile2
+cat < outfile1
+cat < outfile2
+#Appending outfile1 to outfile2
+cat < outfile1 >> outfile2
+cat < outfile2
+#Overwrite outfile1 with contents in current dir.
+ls ../ > outfile1
+cat < outfile1
+rm outfile1
+rm outfile2
+exit
