@@ -45,7 +45,7 @@ int main () {
         cout << user << "@" << host; 
         cout << "$ ";
         getline(cin, userInput);
-        cout << userInput << endl;
+        // cout << userInput << endl;
 
         // checks if there is no input, only spaces, or comments
         if (userInput == "" || onlySpace(userInput)) {
@@ -297,7 +297,16 @@ void parse(string& userInput, Input*& inputs) {
         connectors.pop_back();
         commands.pop_back();
     }
-
+    int cnt = 0;
+    for (unsigned i = 0; i < connectors.size(); i++) {
+        if (connectors.at(i) == '|') {
+            cnt++;
+        }
+        if (cnt > 1) {
+            string s = "Broken";
+            throw s;
+        }
+    }
     // Builds the tree of Inputs
     makeTree(inputs, connectors, commands);
 }

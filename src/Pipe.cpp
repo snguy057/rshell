@@ -78,6 +78,12 @@ bool Pipe::evaluate() {
         return false;
     }
 
+    // 5) overwrite standard input -- SAVE
+    if (dup2(pipe1[0], 0) == -1) {
+        perror("in dup2");
+        return false;
+    }
+
     // 3) run left
     bool leftside = left->evaluate();
 
@@ -97,12 +103,6 @@ bool Pipe::evaluate() {
     }
 
     
-    // 5) overwrite standard input -- SAVE
-    if (dup2(pipe1[0], 0) == -1) {
-        perror("in dup2");
-        return false;
-    }
-
     pid_t pid = fork(); // Fork() so execvp() doesn't quit program
 
     // If error with fork
@@ -134,11 +134,11 @@ bool Pipe::evaluate() {
 
         // 7) restore standard input
         waitpid(pid, &status, 0);
-
+      
         if (dup2(saveIn, 0) == -1) {
             perror("rightside restore");
             return false;
-        }        
+        }  
         if (status > 0) // If status returned, execvp failed
             return false;
         else if (WEXITSTATUS(status) == 0)  // Successful execution
