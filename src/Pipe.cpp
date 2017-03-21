@@ -107,6 +107,15 @@ bool Pipe::evaluate() {
             return false;
         }
 
+        if (close(pipe1[0]) == -1) {
+            perror("close 0");
+            return false;
+        }
+        if (close(pipe1[1]) == -1) {
+            perror("close 1");
+            return false;
+        }
+
         // Execute right side
         if (execvp(args[0], args) == -1) {
             perror("exec");
