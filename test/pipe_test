@@ -1,0 +1,18 @@
+echo 
+echo Beginning pipe testing
+echo
+echo Hello this is a test > out1
+chmod 711 out1
+cat < out1
+cat < out1 | tr a-z A-Z
+cat < out1 | tr a-z A-Z > out2
+chmod 711 out2
+cat < out2 
+cat < out1 | tr a-z A-Z | tee out2 | tr A-Z a-z > out3
+ls -l | cat
+cat < out1 | tee out3
+chmod 711 out3
+cat < out3
+rm out1 out2 out3
+exit
+
