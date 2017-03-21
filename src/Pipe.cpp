@@ -72,6 +72,19 @@ bool Pipe::evaluate() {
         return false;
     }
 
+    // 2) overwrite standard output -- SAVE OUTPUT
+    if (dup2(pipe1[1], 1) == -1) {
+        perror("out dup2");
+        return false;
+    }
+
+    // 3) run left
+    bool leftside = left->evaluate();
+
+    if (!leftside) {
+        return false;
+    }
+
     pid_t pid = fork(); // Fork() so execvp() doesn't quit program
 
     // If error with fork
@@ -82,19 +95,6 @@ bool Pipe::evaluate() {
 
     // Child process, calls execvp()
     if (pid == 0) {
-        // 2) overwrite standard output -- SAVE OUTPUT
-        if (dup2(pipe1[1], 1) == -1) {
-            perror("out dup2");
-            return false;
-        }
-
-        // 3) run left
-        bool leftside = left->evaluate();
-
-        if (!leftside) {
-            return false;
-        }
-
         // 4) restore standard output
         if (dup2(saveOut, 1) == -1) {
             perror("leftside restore");
